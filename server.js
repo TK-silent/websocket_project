@@ -18,6 +18,7 @@ wss.on('connection', function connection(ws) {
             // 如果是从 HTML 网页发来的特定消息，转发给 Unity 客户端
             if (unityClient) {
                 unityClient.send(message);
+                console.log('message send')
             }
         } else {
             // 处理其他普通客户端的消息
