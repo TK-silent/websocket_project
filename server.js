@@ -15,6 +15,7 @@ wss.on('connection', function connection(ws) {
         let parsedMessage = JSON.parse(message);
 
         if (parsedMessage.type === "changeGravity") {
+            console.log('received changeGravity message')
             // 如果是从 HTML 网页发来的特定消息，转发给 Unity 客户端
             if (unityClient) {
                 unityClient.send(message);
