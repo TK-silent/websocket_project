@@ -21,6 +21,8 @@ wss.on('connection', function connection(ws) {
                 unityClient.send(message);
                 console.log('message send')
             }
+            unityClient.send(message);
+            console.log('message send')
         } else {
             // 处理其他普通客户端的消息
             // 这里可以添加逻辑来处理从客户端接收到的消息
