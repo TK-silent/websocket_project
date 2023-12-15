@@ -22,10 +22,11 @@ wss.on('connection', function connection(ws) {
 
         if (parsedMessage.type === "changeGravity") {
             console.log('Received changeGravity message');
-
+        
             if (unityClient) {
-                unityClient.send(message);
-                console.log('Message forwarded to Unity client:', message);
+                const messageString = message.toString(); // 将Buffer转换为字符串
+                unityClient.send(messageString);
+                console.log('Message forwarded to Unity client:', messageString);
             } else {
                 console.log('No Unity client connected to forward the message.');
             }
