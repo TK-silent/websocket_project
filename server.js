@@ -1,42 +1,52 @@
 const WebSocket = require('ws');
-const port = process.env.PORT || 3000; // Render 使用环境变量设置端口
+const port = process.env.PORT || 3000;
 
 const wss = new WebSocket.Server({ port: port });
 
-// 用于存储 Unity 客户端的 WebSocket 连接
 let unityClient = null;
 
 wss.on('connection', function connection(ws) {
-    // 当新的客户端连接时
-    ws.on('message', function incoming(message) {
-        console.log('received: %s', message);
+    console.log('Client connected');
 
-        // 解析接收到的消息
-        let parsedMessage = JSON.parse(message);
+    ws.on('message', function incoming(message) {
+        console.log('Received message: %s', message);
+
+        let parsedMessage;
+        try {
+            parsedMessage = JSON.parse(message);
+            console.log('Parsed message:', parsedMessage);
+        } catch (error) {
+            console.error('Error parsing message:', error);
+            return;
+        }
 
         if (parsedMessage.type === "changeGravity") {
-            console.log('received changeGravity message')
-            // 如果是从 HTML 网页发来的特定消息，转发给 Unity 客户端
+            console.log('Received changeGravity message');
+
             if (unityClient) {
                 unityClient.send(message);
-                console.log('message send')
+                console.log('Message forwarded to Unity client:', message);
+            } else {
+                console.log('No Unity client connected to forward the message.');
             }
-            unityClient.send(message);
-            console.log('message send')
         } else {
-            // 处理其他普通客户端的消息
-            // 这里可以添加逻辑来处理从客户端接收到的消息
+            console.log('Received a different type of message:', parsedMessage.type);
+            // 这里可以添加处理其他类型消息的逻辑
         }
     });
 
-    // 根据连接来源进行标识
+    ws.on('close', function close() {
+        console.log('Client disconnected');
+        if (ws === unityClient) {
+            unityClient = null;
+            console.log('Unity client disconnected');
+        }
+    });
+
     if (ws.protocol === 'unity') {
         unityClient = ws;
-    }
-
-    // 如果是 Unity 客户端连接，可以在首次连接时发送一个特定的消息
-    if (unityClient) {
-        unityClient.send('Hello from the server!');
+        console.log('Unity client connected');
+        ws.send('Hello from the server!');
     }
 });
 
