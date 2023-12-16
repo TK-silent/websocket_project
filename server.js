@@ -47,7 +47,6 @@ wss.on('connection', function connection(ws) {
     if (ws.protocol === 'unity') {
         unityClient = ws;
         console.log('Unity client connected');
-        ws.send('Hello from the server!');
     }
 });
 
