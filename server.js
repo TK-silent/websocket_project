@@ -20,19 +20,13 @@ wss.on('connection', function connection(ws) {
             return;
         }
 
-        if (parsedMessage.type === "changeGravity") {
-            console.log('Received changeGravity message');
-        
-            if (unityClient) {
-                const messageString = message.toString(); // 将Buffer转换为字符串
-                unityClient.send(messageString);
-                console.log('Message forwarded to Unity client:', messageString);
-            } else {
-                console.log('No Unity client connected to forward the message.');
-            }
+        // 检查 Unity 客户端是否连接
+        if (unityClient) {
+            const messageString = message.toString(); // 将Buffer转换为字符串
+            unityClient.send(messageString);
+            console.log('Message forwarded to Unity client:', messageString);
         } else {
-            console.log('Received a different type of message:', parsedMessage.type);
-            // 这里可以添加处理其他类型消息的逻辑
+            console.log('No Unity client connected to forward the message.');
         }
     });
 
